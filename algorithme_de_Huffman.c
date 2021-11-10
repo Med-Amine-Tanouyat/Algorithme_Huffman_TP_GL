@@ -39,3 +39,29 @@ struct HuffmanTree* createHuffmanTree(int cap) {
         
     return huffmanTree;
 }
+//fonction qui sert à la permutation de deux éléments
+void swap(HuffmanTreeNode** a, HuffmanTreeNode** b) { 
+    HuffmanTreeNode *t = *a; //pointeur temporaire
+    *a = *b; 
+    *b = t; 
+}
+
+//fonction qui permet de réaliser la propriété de min-Heap(dans l'arbre de Huffman)
+void minHeapify(HuffmanTree* huffmanTree, int i) {
+ 
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+ 
+ 	//on place chaque noeud conveablement dans l'arbre d'apres sa frequence
+    if (left < huffmanTree->size && huffmanTree->array[left]->freq < huffmanTree->array[smallest]->freq)
+        smallest = left;
+ 
+    if (right < huffmanTree->size && huffmanTree->array[right]->freq < huffmanTree->array[smallest]->freq)
+        smallest = right;
+ 
+    if (smallest != i) {
+        swap(&huffmanTree->array[smallest], &huffmanTree->array[i]);
+        minHeapify(huffmanTree, smallest);
+    }
+}
