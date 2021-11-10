@@ -64,4 +64,23 @@ void minHeapify(HuffmanTree* huffmanTree, int i) {
         swap(&huffmanTree->array[smallest], &huffmanTree->array[i]);
         minHeapify(huffmanTree, smallest);
     }
+//fonction pour construire l'arbre de Huffman(minHeapify à chaque insertion)
+void buildHuffmanTree(HuffmanTree* huffmanTree) {
+    int n = huffmanTree->size - 1;
+    int i;
+    for (i = (n - 1) / 2; i >= 0; --i)
+        minHeapify(huffmanTree, i);
+}
+
+//fonction qui extrait le noeud de fréquence minimun de l'arbre
+HuffmanTreeNode* extractMin(HuffmanTree* huffmanTree) {
+ 
+ 	//extraction avec suppression et reetablissemnt de la propriete min Heap
+    HuffmanTreeNode* t = huffmanTree->array[0];
+    huffmanTree->array[0] = huffmanTree->array[huffmanTree->size - 1];
+    --huffmanTree->size;
+    minHeapify(huffmanTree, 0);
+ 
+    return t;
+}
 }
