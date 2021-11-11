@@ -85,3 +85,99 @@ HuffmanTreeNode* extractMin(HuffmanTree* huffmanTree) {
     return t;
 }
 
+/fonction pour insérer un noeud à l'arbre de Huffman
+void insertHuffmanTreeNode(HuffmanTree* huffmanTree, HuffmanTreeNode* huffmanTreeNode) {
+ 
+    ++huffmanTree->size;
+    int i = huffmanTree->size - 1;
+ 
+    while (i && huffmanTreeNode->freq < huffmanTree->array[(i - 1) / 2]->freq) {
+        huffmanTree->array[i] = huffmanTree->array[(i - 1) / 2];
+        i = (i - 1) / 2;
+    }
+ 
+    huffmanTree->array[i] = huffmanTreeNode;
+}
+
+//regrouper les fonctionalitées de creation et de construction de l'arbre
+HuffmanTree* createAndBuildTree(char data[], int freq[], int size) {
+ 
+    HuffmanTree* huffmanTree = createHuffmanTree(size);
+	int i;
+    for (i = 0; i < size; ++i)
+        huffmanTree->array[i] = newTreeNode(data[i], freq[i]);
+ 
+    huffmanTree->size = size;
+    buildHuffmanTree(huffmanTree);
+ 
+    return huffmanTree;
+}
+
+//implémenter l'arbre en entier
+HuffmanTreeNode* fullTree(char data[], int freq[], int size) {
+    HuffmanTreeNode *left, *right, *top;
+ 
+    //on crée un arbre de Huffman de capacity=size
+    HuffmanTree* huffmanTree = createAndBuildTree(data, freq, size);
+ 
+    while (!(huffmanTree->size == 1)) {
+ 
+        //on prend les deux minimuns consécutifs pour remplir l'arbre
+        left = extractMin(huffmanTree);
+        right = extractMin(huffmanTree);
+ 
+        //on ajoute la somme des fréquences des deux noeds mins en tant que père de ces derniers
+        top = newTreeNode('*', left->freq + right->freq);
+        top->left = left;
+        top->right = right;
+ 
+        insertHuffmanTreeNode(huffmanTree, top);
+    }
+
+    return extractMin(huffmanTree);
+}
+
+//fonction qui réalise le codage dans l'arbre à partir de la racine
+void affectCode(struct HuffmanTreeNode* root, int arr[], int top) {
+ 
+    //on affecte le bit 0 pour le fils gauche
+    if (root->left) {
+        arr[top] = 0;
+        affectCode(root->left, arr, top + 1);
+    }
+    //on affecte le bit 1 pour le fils droite
+    if (root->right) {
+ 
+        arr[top] = 1;
+        affectCode(root->right, arr, top + 1);
+    }
+    //on affiche le charactere et son code binaire
+    if (!(root->left) && !(root->right)) {
+        printf("Codage compresse de %c: ", root->letter);
+        int i;
+	    for (i = 0; i < top; i++)
+	        printf("%d", arr[i]);
+	        
+	    printf("\n");
+    }
+}
+
+//fonction principale de l'algorithme
+void huffmanAlgo(char data[], int freq[], int size) {
+    //on construit l'arbre de Huffman
+    HuffmanTreeNode* root = fullTree(data, freq, size);
+    
+    //on affiche les codes binaires des charactères
+    int arr[MAX_HEIGHT], top = 0;
+    affectCode(root, arr, top);
+}
+
+int main() {
+	char input[] = {'a', 'b', 'c', 'd'};
+    int freq[] = {5, 1, 6, 3};
+ 	  
+    int size = sizeof(input) / sizeof(input[0]);
+    huffmanAlgo(input, freq, size);
+	 
+	return 0;
+}
