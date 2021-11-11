@@ -10,7 +10,8 @@ typedef struct HuffmanTreeNode {
     int freq;
     struct HuffmanTreeNode *left, *right;
 } HuffmanTreeNode;
-//function which creates a new tree node
+
+//fonction cree un nouveau noeud
 HuffmanTreeNode  *newTreeNode(char c, int freq) {
 	HuffmanTreeNode *t = (HuffmanTreeNode *)malloc(sizeof(HuffmanTreeNode));
 	t->letter = c;
@@ -21,7 +22,7 @@ HuffmanTreeNode  *newTreeNode(char c, int freq) {
 }
 //La structure de l'arbre de Huffman
 typedef struct HuffmanTree {
-    //la capcitï¿½ de l'arbre
+    //la capcite de l'arbre
     int capacity;
     //la taille totale de l'arbre de Huffman
     int size;
@@ -29,7 +30,7 @@ typedef struct HuffmanTree {
 	HuffmanTreeNode** array;
 } HuffmanTree;
 
-//fonction qui crï¿½e l'arbre de Huffman ï¿½ partir d'une capacitï¿½ donnï¿½e(allocation mï¿½moire & affectation des champs de strct)
+//fonction qui cree l'arbre de Huffman a partir d'une capacite donnee(allocation memoire & affectation des champs de strct)
 struct HuffmanTree* createHuffmanTree(int cap) {
     HuffmanTree* huffmanTree = (HuffmanTree*)malloc(sizeof(HuffmanTree));
 
@@ -39,14 +40,14 @@ struct HuffmanTree* createHuffmanTree(int cap) {
 
     return huffmanTree;
 }
-//fonction qui sert à la permutation de deux éléments
+//fonction qui sert à la permutation de deux elements
 void swap(HuffmanTreeNode** a, HuffmanTreeNode** b) {
     HuffmanTreeNode *t = *a; //pointeur temporaire
     *a = *b;
     *b = t;
 }
 
-//fonction qui permet de réaliser la propriété de min-Heap(dans l'arbre de Huffman)
+//fonction qui permet de realiser la propriete de min-Heap(dans l'arbre de Huffman)
 void minHeapify(HuffmanTree* huffmanTree, int i) {
 
     int smallest = i;
@@ -65,7 +66,7 @@ void minHeapify(HuffmanTree* huffmanTree, int i) {
         minHeapify(huffmanTree, smallest);
     }
 }
-//fonction pour construire l'arbre de Huffman(minHeapify à chaque insertion)
+//fonction pour construire l'arbre de Huffman(minHeapify a chaque insertion)
 void buildHuffmanTree(HuffmanTree* huffmanTree) {
     int n = huffmanTree->size - 1;
     int i;
@@ -73,7 +74,7 @@ void buildHuffmanTree(HuffmanTree* huffmanTree) {
         minHeapify(huffmanTree, i);
 }
 
-//fonction qui extrait le noeud de fréquence minimun de l'arbre
+//fonction qui extrait le noeud de frequence minimun de l'arbre
 HuffmanTreeNode* extractMin(HuffmanTree* huffmanTree) {
 
  	//extraction avec suppression et reetablissemnt de la propriete min Heap
@@ -83,93 +84,6 @@ HuffmanTreeNode* extractMin(HuffmanTree* huffmanTree) {
     minHeapify(huffmanTree, 0);
 
     return t;
-}
-
-/fonction pour insérer un noeud à l'arbre de Huffman
-void insertHuffmanTreeNode(HuffmanTree* huffmanTree, HuffmanTreeNode* huffmanTreeNode) {
-
-    ++huffmanTree->size;
-    int i = huffmanTree->size - 1;
-
-    while (i && huffmanTreeNode->freq < huffmanTree->array[(i - 1) / 2]->freq) {
-        huffmanTree->array[i] = huffmanTree->array[(i - 1) / 2];
-        i = (i - 1) / 2;
-    }
-
-    huffmanTree->array[i] = huffmanTreeNode;
-}
-
-//regrouper les fonctionalitées de creation et de construction de l'arbre
-HuffmanTree* createAndBuildTree(char data[], int freq[], int size) {
-
-    HuffmanTree* huffmanTree = createHuffmanTree(size);
-	int i;
-    for (i = 0; i < size; ++i)
-        huffmanTree->array[i] = newTreeNode(data[i], freq[i]);
-
-    huffmanTree->size = size;
-    buildHuffmanTree(huffmanTree);
-
-    return huffmanTree;
-}
-
-//implémenter l'arbre en entier
-HuffmanTreeNode* fullTree(char data[], int freq[], int size) {
-    HuffmanTreeNode *left, *right, *top;
-
-    //on crée un arbre de Huffman de capacity=size
-    HuffmanTree* huffmanTree = createAndBuildTree(data, freq, size);
-
-    while (!(huffmanTree->size == 1)) {
-
-        //on prend les deux minimuns consécutifs pour remplir l'arbre
-        left = extractMin(huffmanTree);
-        right = extractMin(huffmanTree);
-
-        //on ajoute la somme des fréquences des deux noeds mins en tant que père de ces derniers
-        top = newTreeNode('*', left->freq + right->freq);
-        top->left = left;
-        top->right = right;
-
-        insertHuffmanTreeNode(huffmanTree, top);
-    }
-
-    return extractMin(huffmanTree);
-}
-
-//fonction qui réalise le codage dans l'arbre à partir de la racine
-void affectCode(struct HuffmanTreeNode* root, int arr[], int top) {
-
-    //on affecte le bit 0 pour le fils gauche
-    if (root->left) {
-        arr[top] = 0;
-        affectCode(root->left, arr, top + 1);
-    }
-    //on affecte le bit 1 pour le fils droite
-    if (root->right) {
-
-        arr[top] = 1;
-        affectCode(root->right, arr, top + 1);
-    }
-    //on affiche le charactere et son code binaire
-    if (!(root->left) && !(root->right)) {
-        printf("Codage compresse de %c: ", root->letter);
-        int i;
-	    for (i = 0; i < top; i++)
-	        printf("%d", arr[i]);
-
-	    printf("\n");
-    }
-}
-
-//fonction principale de l'algorithme
-void huffmanAlgo(char data[], int freq[], int size) {
-    //on construit l'arbre de Huffman
-    HuffmanTreeNode* root = fullTree(data, freq, size);
-
-    //on affiche les codes binaires des charactères
-    int arr[MAX_HEIGHT], top = 0;
-    affectCode(root, arr, top);
 }
 
 //fonction pour insérer un noeud à l'arbre de Huffman
@@ -200,20 +114,20 @@ HuffmanTree* createAndBuildTree(char data[], int freq[], int size) {
     return huffmanTree;
 }
 
-//implémenter l'arbre en entier
+//implementer l'arbre en entier
 HuffmanTreeNode* fullTree(char data[], int freq[], int size) {
     HuffmanTreeNode *left, *right, *top;
 
-    //on crée un arbre de Huffman de capacity=size
+    //on cree un arbre de Huffman de capacity=size
     HuffmanTree* huffmanTree = createAndBuildTree(data, freq, size);
 
     while (!(huffmanTree->size == 1)) {
 
-        //on prend les deux minimuns consécutifs pour remplir l'arbre
+        //on prend les deux minimuns consecutifs pour remplir l'arbre
         left = extractMin(huffmanTree);
         right = extractMin(huffmanTree);
 
-        //on ajoute la somme des fréquences des deux noeds mins en tant que père de ces derniers
+        //on ajoute la somme des frequences des deux noeuds mins en tant que père de ces derniers
         top = newTreeNode('*', left->freq + right->freq);
         top->left = left;
         top->right = right;
@@ -223,6 +137,43 @@ HuffmanTreeNode* fullTree(char data[], int freq[], int size) {
 
     return extractMin(huffmanTree);
 }
+
+//fonction qui realise le codage dans l'arbre a partir de la racine
+void affectCode(struct HuffmanTreeNode* root, int arr[], int top) {
+
+    //on affecte le bit 0 pour le fils gauche
+    if (root->left) {
+        arr[top] = 0;
+        affectCode(root->left, arr, top + 1);
+    }
+    //on affecte le bit 1 pour le fils droite
+    if (root->right) {
+
+        arr[top] = 1;
+        affectCode(root->right, arr, top + 1);
+    }
+    //on affiche le charactere et son code binaire
+    if (!(root->left) && !(root->right)) {
+        printf("Codage compresse de %c: ", root->letter);
+        int i;
+	    for (i = 0; i < top; i++)
+	        printf("%d", arr[i]);
+
+	    printf("\n");
+    }
+}
+
+//fonction principale de l'algorithme
+void huffmanAlgo(char data[], int freq[], int size) {
+    //on construit l'arbre de Huffman
+    HuffmanTreeNode* root = fullTree(data, freq, size);
+
+    //on affiche les codes binaires des characteres
+    int arr[MAX_HEIGHT], top = 0;
+    affectCode(root, arr, top);
+}
+
+
 int main() {
 	char input[] = {'a', 'b', 'c', 'd'};
     int freq[] = {5, 1, 6, 3};
